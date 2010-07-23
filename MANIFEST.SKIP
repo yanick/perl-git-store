@@ -1,5 +1,0 @@
-^MANIFEST\.SKIP$
-^GitStore
-^Makefile$
-\.gitignore
-dist.ini
