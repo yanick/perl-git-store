@@ -1,0 +1,44 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.68.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 0d9d9ddd7eeba5c4b8e8694eb64dfe1155eeeebb Build.PL
+SHA1 6db1564b35b0f387f9035568c673c148d3b5a715 Changes
+SHA1 8fefb8f8dd2355c6eed54fbd332755505d187228 INSTALL
+SHA1 252694b44b6de9a3d070e61e8138b1d3bd987c0b LICENSE
+SHA1 1ae85d7ea292fbb0f0f61ee4a8779617e48367a9 MANIFEST
+SHA1 5ed8debfb87e22cb14fe7e98aade02d715b850e9 META.json
+SHA1 d5fa8ade2aa51264ad527003f0732696b8cae8ce META.yml
+SHA1 aa092ea79046b78bee4cbbfef9800a7e31392efa README
+SHA1 73bb4a6b81e04d6daef04198f090afe1d1e7f5c9 README.mkdn
+SHA1 c3b70f8c809300d7aae2ae70a4ef302bd8db656d lib/GitStore.pm
+SHA1 51fa4216792ff108df634d7f925f218d2a0ea2c1 lib/GitStore/Revision.pm
+SHA1 3cbe905b92fbc69d59a06031d5ce6c837b352aa2 t/00-compile.t
+SHA1 1b43651f21c184c199194385323aa15b36365ff5 t/00-load.t
+SHA1 473906254ecd96009795d4b7fbc82fac48c03ecd t/000-report-versions.t
+SHA1 acbbd8b5f884d3ae76355a87013acd760e2e3157 t/01-basic.t
+SHA1 ba7914c531452b1940d0e21b8dc91c0e3e8a2c8c t/02-next.t
+SHA1 dc51223b4a19fec4d4c913e16a9be7a20a911a9b t/03-next-next.t
+SHA1 45adcd98f14331a1c658d3f4c4f47f7d003cc7bc t/history.t
+SHA1 99d6f54749435b5a2ba0233cae7b299cd34e42a7 t/many-commits.t
+SHA1 640935336dc1123c0069bcf5432bcaedc2cf22d3 t/pod.t
+SHA1 ec3f84bfd7a9ce3246e7592f4134100c6b5ce02b xt/release/unused-vars.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAk/OsTQACgkQ34Hwf+GwC4wbuQCfea21uc6FsSrK57rAUZIJwt0h
+AW0AoNOFGY9Ko0VmbsdxFt8NoSrjGN0s
+=4o0T
+-----END PGP SIGNATURE-----

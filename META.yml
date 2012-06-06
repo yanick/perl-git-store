@@ -1,30 +1,46 @@
 ---
 abstract: 'Git as versioned data store in Perl'
 author:
-  - 'Fayland Lam, C<< <fayland at gmail.com> >>'
   - 'Fayland Lam <fayland@gmail.com>'
+  - 'Yanick Champoux <yanick@cpan.org>'
 build_requires:
-  ExtUtils::MakeMaker: 6.42
-  Test::More: 0
+  Carp: 0
+  File::Find: 0
+  File::Temp: 0
+  FindBin: 0
+  Module::Build: 0.3601
+  Path::Class: 0
+  Scalar::Util: 0
+  Test::More: 0.94
+  perl: 5.004
 configure_requires:
-  ExtUtils::MakeMaker: 6.42
-distribution_type: module
-generated_by: 'Module::Install version 0.97'
+  Module::Build: 0.3601
+dynamic_config: 0
+generated_by: 'Dist::Zilla version 4.300010, CPAN::Meta::Converter version 2.120630'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
   version: 1.4
 name: GitStore
-no_index:
-  directory:
-    - inc
-    - t
+provides:
+  GitStore:
+    file: lib/GitStore.pm
+    version: 0.08
+  GitStore::Revision:
+    file: lib/GitStore/Revision.pm
+    version: 0.08
 requires:
-  Git::PurePerl: 0.41
-  Moose: 0.56
-  Storable: 2.18
-  Test::More: 0
+  DateTime: 0
+  Git::PurePerl: 0
+  Git::Repository: 0
+  Moose: 0
+  Moose::Util::TypeConstraints: 0
+  Storable: 0
+  strict: 0
+  warnings: 0
 resources:
-  license: http://dev.perl.org/licenses/
-  repository: http://github.com/fayland/perl-git-store/tree/master
-version: 0.07
+  bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=GitStore
+  homepage: http://search.cpan.org/dist/GitStore/
+  repository: https://github.com/yanick/perl-git-store.git
+version: 0.08
+x_authority: cpan:YANICK

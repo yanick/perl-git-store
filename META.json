@@ -1,0 +1,79 @@
+{
+   "abstract" : "Git as versioned data store in Perl",
+   "author" : [
+      "Fayland Lam <fayland@gmail.com>",
+      "Yanick Champoux <yanick@cpan.org>"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Dist::Zilla version 4.300010, CPAN::Meta::Converter version 2.120630",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "GitStore",
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "Module::Build" : "0.3601"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "DateTime" : "0",
+            "Git::PurePerl" : "0",
+            "Git::Repository" : "0",
+            "Moose" : "0",
+            "Moose::Util::TypeConstraints" : "0",
+            "Storable" : "0",
+            "strict" : "0",
+            "warnings" : "0"
+         }
+      },
+      "test" : {
+         "requires" : {
+            "Carp" : "0",
+            "File::Find" : "0",
+            "File::Temp" : "0",
+            "FindBin" : "0",
+            "Path::Class" : "0",
+            "Scalar::Util" : "0",
+            "Test::More" : "0.94",
+            "perl" : "5.004"
+         }
+      }
+   },
+   "provides" : {
+      "GitStore" : {
+         "file" : "lib/GitStore.pm",
+         "version" : "0.08"
+      },
+      "GitStore::Revision" : {
+         "file" : "lib/GitStore/Revision.pm",
+         "version" : "0.08"
+      }
+   },
+   "release_status" : "stable",
+   "resources" : {
+      "bugtracker" : {
+         "mailto" : "bug-gitstore at rt.cpan.org",
+         "web" : "http://rt.cpan.org/Public/Dist/Display.html?Name=GitStore"
+      },
+      "homepage" : "http://search.cpan.org/dist/GitStore/",
+      "repository" : {
+         "type" : "git",
+         "url" : "https://github.com/yanick/perl-git-store.git",
+         "web" : "https://github.com/yanick/perl-git-store"
+      }
+   },
+   "version" : "0.08",
+   "x_authority" : "cpan:YANICK"
+}
+

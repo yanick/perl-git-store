@@ -1,8 +1,10 @@
 package GitStore;
+#ABSTRACT: Git as versioned data store in Perl
 
 use Moose;
 use Moose::Util::TypeConstraints;
 use Git::PurePerl;
+use Git::Repository;
 use Storable qw(nfreeze thaw);
 
 no warnings qw/ uninitialized /;
@@ -43,8 +45,24 @@ has 'git' => (
     isa => 'Git::PurePerl',
     lazy => 1,
     default => sub {
-        Git::PurePerl->new( directory =>  shift->repo );
+        my $repo = $_[0]->repo;
+        return Git::PurePerl->new( 
+            ( $repo =~ m/\.git$/ ? 'gitdir' : 'directory') => $repo 
+        );
     }
+);
+
+# TODO use Git::PurePerl attribute instead
+has 'git_repo' => (
+    is => 'ro',
+    isa => 'Git::Repository',
+    lazy => 1,
+    default => sub {
+        my $repo = shift->repo;
+        return Git::Repository->new(
+            ( $repo =~ m/\.git$/ ? 'git_dir' : 'work_tree') => $repo 
+        )
+    },
 );
 
 sub BUILD {
@@ -156,15 +174,15 @@ sub commit {
     # there might not be a parent, if it's a new branch
     my $parent = eval { $self->git->ref( 'refs/heads/'.$self->branch )->sha1 };
 
+    my $timestamp = DateTime->now;
     my $commit = Git::PurePerl::NewObject::Commit->new(
         ( parent => $parent ) x !!$parent,
         tree => $tree->sha1,
-        #content => $content,
         author => $self->author,
         committer => $self->author,
         comment => $message||'',
-        authored_time  => DateTime->now,
-        committed_time => DateTime->now,
+        authored_time  => $timestamp,
+        committed_time => $timestamp,
     );
     $self->git->put_object($commit);
 
@@ -198,15 +216,35 @@ sub _cond_thaw {
     }
 }
 
+sub history {
+    my ( $self, $path ) = @_;
+
+    require GitStore::Revision;
+
+    return reverse map { GitStore::Revision->new( 
+                    path => $path, 
+                    commit => $_,
+                    gitstore => $self,
+                ) } 
+               $self->git_repo->run( 'log', '--pretty=format:%H', '--', $path );
+}
+
+
 no Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
-__END__
+
+
+=pod
 
 =head1 NAME
 
 GitStore - Git as versioned data store in Perl
+
+=head1 VERSION
+
+version 0.08
 
 =head1 SYNOPSIS
 
@@ -223,7 +261,6 @@ GitStore - Git as versioned data store in Perl
     my $val = $gs->get( 'user/obj.txt' ); # $val is the same as $obj
     my $val = $gs->get( 'config/wiki.txt' ); # $val is { hashref => 1 } );
     my $val = $gs->get( ['yyy', 'xxx.log' ] ); # $val is undef since discard
-    
 
 =head1 DESCRIPTION
 
@@ -293,6 +330,11 @@ commit the B<set> changes into Git
 
 discard the B<set> changes
 
+=head2 history($path)
+
+Returns a list of L<GitStore::Revision> objects representing the changes
+brought to the I<$path>. The changes are returned in ascending commit order.
+
 =head1 FAQ
 
 =head2 why the files are B<not> there?
@@ -341,15 +383,30 @@ L<http://github.com/georgi/git_store/tree/master>
 
 L<http://github.com/fayland/perl-git-store/tree/master>
 
-=head1 AUTHOR
+=head1 AUTHORS
 
-Fayland Lam, C<< <fayland at gmail.com> >>
+=over 4
 
-Itsy bitsy contribution by Yanick Champoux, C<< <yanick@cpan.org> >>
+=item *
 
-=head1 COPYRIGHT & LICENSE
+Fayland Lam <fayland@gmail.com>
 
-Copyright 2009, 2010 Fayland Lam, all rights reserved.
+=item *
 
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.
+Yanick Champoux <yanick@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Fayland Lam <fayland@gmail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
+
+
+__END__
+
+

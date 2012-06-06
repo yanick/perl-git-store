@@ -1,25 +1,31 @@
 Revision history for GitStore
 
-0.07    2010.7.23
-        * fix the commits such that they don't clobber their branch anymore. 
+0.08 2012-06-05
+ - Add history() method.
 
-0.06    2010.3.3
-        Change the way author is handled to work with new version
-            of Git::PurePerl::NewObject::Commit.
+ [STATISTICS]
+ - code churn: 9 files changed, 244 insertions(+), 116 deletions(-)
 
-0.05    2009.3.16
-        fix commit date by time()
-        fix commit author/committer by configurable author
+0.07 2010-07-23
+ - fix the commits such that they don't clobber their branch anymore. 
 
-0.04    2009.3.16
-        FAQ doc
+0.06 2010-03-03
+ - Change the way author is handled to work with new version of
+   Git::PurePerl::NewObject::Commit.
 
-0.03    2009.3.14
-        big bug fix because I used Git::PurePerl wrong, thanks for acme
+0.05 2009-03-16
+ - fix commit date by time()
+ - fix commit author/committer by configurable author
 
-0.02	2009.3.14
-        fix broken CPAN dist
+0.04 2009-03-16
+ - FAQ doc
 
-0.01    2009.3.14
-        First version, released on an unsuspecting world.
+0.03 2009-03-14
+ - big bug fix because I used Git::PurePerl wrong, thanks for acme
+
+0.02 2009-03-14
+ - fix broken CPAN dist
+
+0.01 2009-03-14
+ - First version, released on an unsuspecting world.
 

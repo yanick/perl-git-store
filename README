@@ -1,6 +1,9 @@
 NAME
     GitStore - Git as versioned data store in Perl
 
+VERSION
+    version 0.08
+
 SYNOPSIS
         use GitStore;
 
@@ -10,8 +13,8 @@ SYNOPSIS
         $gs->commit();
         $gs->set( 'yyy/xxx.log', 'Log me' );
         $gs->discard();
-        
-    # later or in another pl
+    
+        # later or in another pl
         my $val = $gs->get( 'user/obj.txt' ); # $val is the same as $obj
         my $val = $gs->get( 'config/wiki.txt' ); # $val is { hashref => 1 } );
         my $val = $gs->get( ['yyy', 'xxx.log' ] ); # $val is undef since discard
@@ -68,6 +71,11 @@ METHODS
 
     discard the set changes
 
+  history($path)
+    Returns a list of GitStore::Revision objects representing the changes
+    brought to the *$path*. The changes are returned in ascending commit
+    order.
+
 FAQ
   why the files are not there?
     run
@@ -82,8 +90,8 @@ FAQ
         # use GitStore->new('/path/to/this/sandbox')
         # set something
         git checkout
-        
-    # follows are for remote git url
+    
+        # follows are for remote git url
         git remote add origin git@github.com:fayland/sandbox2.git
         git push origin master
         # do more GitStore->new('/path/to/this/sandbox') later
@@ -105,12 +113,14 @@ SEE ALSO
 Git URL
     <http://github.com/fayland/perl-git-store/tree/master>
 
-AUTHOR
-    Fayland Lam, "<fayland at gmail.com>"
+AUTHORS
+    *   Fayland Lam <fayland@gmail.com>
 
-COPYRIGHT & LICENSE
-    Copyright 2009 Fayland Lam, all rights reserved.
+    *   Yanick Champoux <yanick@cpan.org>
 
-    This program is free software; you can redistribute it and/or modify it
-    under the same terms as Perl itself.
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2012 by Fayland Lam <fayland@gmail.com>.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
 
