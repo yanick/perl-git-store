@@ -1,8 +1,10 @@
 package GitStore;
+#ABSTRACT: Git as versioned data store in Perl
 
 use Moose;
 use Moose::Util::TypeConstraints;
 use Git::PurePerl;
+use Git::Repository;
 use Storable qw(nfreeze thaw);
 
 no warnings qw/ uninitialized /;
@@ -56,7 +58,6 @@ has 'git_repo' => (
     isa => 'Git::Repository',
     lazy => 1,
     default => sub {
-        require Git::Repository;
         my $repo = shift->repo;
         return Git::Repository->new(
             ( $repo =~ m/\.git$/ ? 'git_dir' : 'work_tree') => $repo 
@@ -235,9 +236,6 @@ __PACKAGE__->meta->make_immutable;
 1;
 __END__
 
-=head1 NAME
-
-GitStore - Git as versioned data store in Perl
 
 =head1 SYNOPSIS
 
@@ -378,15 +376,3 @@ L<http://github.com/georgi/git_store/tree/master>
 
 L<http://github.com/fayland/perl-git-store/tree/master>
 
-=head1 AUTHOR
-
-Fayland Lam, C<< <fayland at gmail.com> >>
-
-Itsy bitsy contribution by Yanick Champoux, C<< <yanick@cpan.org> >>
-
-=head1 COPYRIGHT & LICENSE
-
-Copyright 2009, 2010 Fayland Lam, all rights reserved.
-
-This program is free software; you can redistribute it and/or modify it
-under the same terms as Perl itself.

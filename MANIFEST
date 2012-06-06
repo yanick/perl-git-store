@@ -5,7 +5,6 @@ LICENSE
 MANIFEST
 META.json
 META.yml
-Makefile.PL
 README
 README.mkdn
 SIGNATURE
@@ -31,3 +30,4 @@ t/03-next-next.t
 t/history.t
 t/many-commits.t
 t/pod.t
+xt/release/unused-vars.t
