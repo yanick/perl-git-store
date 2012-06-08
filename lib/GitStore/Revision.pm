@@ -28,18 +28,52 @@ use Moose;
 
 use GitStore;
 use DateTime;
+use List::Util qw/ first /;
 
 =head1 METHODS
 
-=head2 commit
+=head2 sha1
 
 Returns the SHA-1 of the commit.
 
 =cut
 
-has commit => (
+has sha1 => (
     is => 'ro',
     required => 1,
+);
+
+=head2 commit_object
+
+Returns the L<Git::PurePerl::Object::Commit> object containing the file revision.
+
+=cut
+
+=head2 timestamp
+
+Returns the commit time of the revision as a L<DateTime> object.
+
+=cut
+
+=head2 message
+
+Returns the commit message of the revision.  Note that the message might have
+additional trailing carriage returns.
+
+=cut
+
+has commit_object => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+
+        return $self->git->get_object($self->sha1);
+    },
+    handles => {
+        timestamp => 'authored_time',
+        message   => 'comment',
+    },
 );
 
 =head2 path
@@ -58,39 +92,22 @@ has gitstore => (
     isa => 'GitStore',
     required => 1,
     handles => {
-        git_repo => 'git_repo'
+        git_repo => 'git_repo',
+        git => 'git',
     },
 );
 
-=head2 timestamp
+has file_object => ( 
+    is => 'ro',
+    lazy => 1,
+    default => sub { 
+        my $self = shift;
 
-Returns the commit time of the revision as a L<DateTime> object.
+        return first { $_->filename eq $self->path }
+                     $self->commit_object->tree->directory_entries;
+    },
+);
 
-=cut
-
-sub timestamp {
-    my $self = shift;
-
-    return DateTime->from_epoch( epoch =>
-    ($self->git_repo->run( 'show', '--pretty=format:%at', $self->commit ))[0] );
-}
-
-=head2 message
-
-Returns the commit message of the revision.  Note that the message might have
-additional trailing carriage returns.
-
-=cut
-
-sub message {
-    my $self = shift;
-
-    ( my $comment = $self->git_repo->run( 'show', '--pretty=format:%B',
-            $self->commit ) )
-        =~ s/^diff --git.*//sm;
-
-    return $comment;
-}
 
 =head2 content
 
@@ -103,7 +120,7 @@ sub content {
     my $self = shift;
 
     GitStore::_cond_thaw(
-        scalar $self->git_repo->run('show', join ':', $self->commit, $self->path)
+        scalar $self->file_object->object->content
     );
 }
 

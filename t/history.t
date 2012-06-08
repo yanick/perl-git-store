@@ -40,7 +40,7 @@ is @history => 4, '4 entries for foo/bar/baz';
 
 my $last_time = $start_time;
 my $i = 0;
-for ( @history ) {
+for (  @history ) {
     isa_ok $_->timestamp, 'DateTime';
     cmp_ok $_->timestamp->epoch, '>=', $last_time, "commited after last one";
     cmp_ok $_->timestamp->epoch, '<=', $end_time, "commited before last time";

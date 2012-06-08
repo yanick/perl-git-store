@@ -8,6 +8,7 @@ Revision history for GitStore
  [DOCUMENTATION]
 
  [ENHANCEMENTS]
+ - Ported all uses of Git::Repository to Git::PurePerl
 
  [NEW FEATURES]
 
