@@ -1,10 +1,14 @@
 Revision history for GitStore
 
-0.08 2012-06-05
- - Add history() method.
+0.09 2012-06-07
+ [ENHANCEMENTS]
+ - Ported all uses of Git::Repository to Git::PurePerl
 
  [STATISTICS]
- - code churn: 9 files changed, 244 insertions(+), 116 deletions(-)
+ - code churn: 4 files changed, 110 insertions(+), 69 deletions(-)
+
+0.08 2012-06-05
+ - Add history() method.
 
 0.07 2010-07-23
  - fix the commits such that they don't clobber their branch anymore. 

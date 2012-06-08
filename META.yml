@@ -25,14 +25,14 @@ name: GitStore
 provides:
   GitStore:
     file: lib/GitStore.pm
-    version: 0.08
+    version: 0.09
   GitStore::Revision:
     file: lib/GitStore/Revision.pm
-    version: 0.08
+    version: 0.09
 requires:
   DateTime: 0
   Git::PurePerl: 0
-  Git::Repository: 0
+  List::Util: 0
   Moose: 0
   Moose::Util::TypeConstraints: 0
   Storable: 0
@@ -42,5 +42,5 @@ resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=GitStore
   homepage: http://search.cpan.org/dist/GitStore/
   repository: https://github.com/yanick/perl-git-store.git
-version: 0.08
+version: 0.09
 x_authority: cpan:YANICK

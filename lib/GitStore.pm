@@ -4,8 +4,9 @@ package GitStore;
 use Moose;
 use Moose::Util::TypeConstraints;
 use Git::PurePerl;
-use Git::Repository;
 use Storable qw(nfreeze thaw);
+
+use List::Util qw/ first /;
 
 no warnings qw/ uninitialized /;
 
@@ -50,19 +51,6 @@ has 'git' => (
             ( $repo =~ m/\.git$/ ? 'gitdir' : 'directory') => $repo 
         );
     }
-);
-
-# TODO use Git::PurePerl attribute instead
-has 'git_repo' => (
-    is => 'ro',
-    isa => 'Git::Repository',
-    lazy => 1,
-    default => sub {
-        my $repo = shift->repo;
-        return Git::Repository->new(
-            ( $repo =~ m/\.git$/ ? 'git_dir' : 'work_tree') => $repo 
-        )
-    },
 );
 
 sub BUILD {
@@ -221,12 +209,34 @@ sub history {
 
     require GitStore::Revision;
 
-    return reverse map { GitStore::Revision->new( 
-                    path => $path, 
-                    commit => $_,
-                    gitstore => $self,
-                ) } 
-               $self->git_repo->run( 'log', '--pretty=format:%H', '--', $path );
+    my $head = $self->git->ref_sha1('refs/heads/' . $self->branch)
+        or return;
+
+    my @q = ( $self->git->get_object($head) );
+
+    my @commits;
+    while ( @q ) {
+        push @q, $q[0]->parents;
+        unshift @commits, shift @q;
+    }
+
+    my @history_commits;
+    my %sha1_seen;
+
+    for my $c ( @commits ) {
+        my $file = first { $_->filename eq $path } 
+                         $c->tree->directory_entries or next;
+        push @history_commits, $c unless $sha1_seen{ $file->object->sha1 }++;        
+    }
+
+    return map {
+        GitStore::Revision->new( 
+            path => $path, 
+            gitstore => $self,
+            sha1 => $_->sha1,
+        )
+    } @history_commits;
+
 }
 
 
@@ -244,7 +254,7 @@ GitStore - Git as versioned data store in Perl
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 

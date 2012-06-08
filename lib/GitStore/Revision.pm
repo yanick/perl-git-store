@@ -3,7 +3,7 @@ BEGIN {
   $GitStore::Revision::AUTHORITY = 'cpan:YANICK';
 }
 {
-  $GitStore::Revision::VERSION = '0.08';
+  $GitStore::Revision::VERSION = '0.09';
 }
 #ABSTRACT: the state of a given path for a specific commit
 
@@ -15,11 +15,29 @@ use Moose;
 
 use GitStore;
 use DateTime;
+use List::Util qw/ first /;
 
 
-has commit => (
+has sha1 => (
     is => 'ro',
     required => 1,
+);
+
+
+
+
+has commit_object => (
+    is => 'ro',
+    lazy => 1,
+    default => sub {
+        my $self = shift;
+
+        return $self->git->get_object($self->sha1);
+    },
+    handles => {
+        timestamp => 'authored_time',
+        message   => 'comment',
+    },
 );
 
 
@@ -33,35 +51,29 @@ has gitstore => (
     isa => 'GitStore',
     required => 1,
     handles => {
-        git_repo => 'git_repo'
+        git_repo => 'git_repo',
+        git => 'git',
     },
 );
 
+has file_object => ( 
+    is => 'ro',
+    lazy => 1,
+    default => sub { 
+        my $self = shift;
 
-sub timestamp {
-    my $self = shift;
+        return first { $_->filename eq $self->path }
+                     $self->commit_object->tree->directory_entries;
+    },
+);
 
-    return DateTime->from_epoch( epoch =>
-    ($self->git_repo->run( 'show', '--pretty=format:%at', $self->commit ))[0] );
-}
-
-
-sub message {
-    my $self = shift;
-
-    ( my $comment = $self->git_repo->run( 'show', '--pretty=format:%B',
-            $self->commit ) )
-        =~ s/^diff --git.*//sm;
-
-    return $comment;
-}
 
 
 sub content {
     my $self = shift;
 
     GitStore::_cond_thaw(
-        scalar $self->git_repo->run('show', join ':', $self->commit, $self->path)
+        scalar $self->file_object->object->content
     );
 }
 
@@ -78,7 +90,7 @@ GitStore::Revision - the state of a given path for a specific commit
 
 =head1 VERSION
 
-version 0.08
+version 0.09
 
 =head1 SYNOPSIS
 
@@ -100,13 +112,13 @@ Represents an object in a  L<GitStore> at a specific commit.
 
 =head1 METHODS
 
-=head2 commit
+=head2 sha1
 
 Returns the SHA-1 of the commit.
 
-=head2 path
+=head2 commit_object
 
-Returns the path of the L<GitStore> object.
+Returns the L<Git::PurePerl::Object::Commit> object containing the file revision.
 
 =head2 timestamp
 
@@ -116,6 +128,10 @@ Returns the commit time of the revision as a L<DateTime> object.
 
 Returns the commit message of the revision.  Note that the message might have
 additional trailing carriage returns.
+
+=head2 path
+
+Returns the path of the L<GitStore> object.
 
 =head2 content
 
