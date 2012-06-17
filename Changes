@@ -1,8 +1,6 @@
 Revision history for GitStore
 
 {{$NEXT}}
-
-0.09      2012-06-07
  [API CHANGES]
 
  [BUG FIXES]
@@ -10,11 +8,14 @@ Revision history for GitStore
  [DOCUMENTATION]
 
  [ENHANCEMENTS]
- - Ported all uses of Git::Repository to Git::PurePerl
 
  [NEW FEATURES]
 
  [STATISTICS]
+
+0.09 2012-06-07
+ [ENHANCEMENTS]
+ - Ported all uses of Git::Repository to Git::PurePerl
 
 0.08 2012-06-05
  - Add history() method.
