@@ -137,8 +137,18 @@ sub commit {
             mode     => '100644',
             filename => $d->filename,
             sha1     => $d->sha1,
-        );;
+        );
     }
+
+    unless ( @new_de or %{$self->{to_add}} ) {
+        # everything was deleted. If given nothing, the NewObject::Tree
+        # below will go boom. Create a 'dummy' file so that Git is
+        # placated
+        # TODO find the correct way to commit an empty tree
+
+        $self->{to_add}{dummy} = 'dummy entry to keep Git happy';
+    }
+
     # for add those new
     foreach my $path ( keys %{$self->{to_add}} ) {
         my $content = $self->to_add->{$path};
@@ -363,6 +373,11 @@ run
     git checkout
     git pull origin master
     git push
+
+=head1 KNOWN BUGS
+
+If all files are deleted from the repository, a 'dummy' file
+will be created to keep Git happy.
 
 =head1 SEE ALSO
 

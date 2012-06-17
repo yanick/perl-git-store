@@ -4,6 +4,7 @@ Revision history for GitStore
  [API CHANGES]
 
  [BUG FIXES]
+ - Prevents GitStore from dying if all files are deleted from the repository.
 
  [DOCUMENTATION]
 
