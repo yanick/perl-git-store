@@ -88,10 +88,21 @@ sub load {
     }
 }
 
+sub _normalize_path {
+    my ( $self, $path ) = @_;
+
+    $path = join '/', @$path if ref $path eq 'ARRAY';
+
+    # Git doesn't like paths prefixed with a '/'
+    $path =~ s#^/+##;
+
+    return $path;
+}
+
 sub get {
     my ( $self, $path ) = @_;
     
-    $path = join('/', @$path) if ref $path eq 'ARRAY';
+    $path = $self->_normalize_path($path);
 
     if ( grep { $_ eq $path } @{$self->to_delete} ) {
         return;
@@ -109,7 +120,8 @@ sub get {
 sub set {
     my ( $self, $path, $content ) = @_;
     
-    $path = join('/', @$path) if ref $path eq 'ARRAY';
+    $path = $self->_normalize_path($path);
+
     $self->{to_add}->{$path} = $content;
 }
 
@@ -117,7 +129,7 @@ sub set {
 sub delete {
     my ( $self, $path ) = @_;
     
-    $path = join('/', @$path) if ref $path eq 'ARRAY';
+    $path = $self->_normalize_path($path);
     push @{$self->{to_delete}}, $path;
     
 }
@@ -310,9 +322,12 @@ It is used in the commit info
 
 Store $val as a $path file in Git
 
-$path can be String or ArrayRef
+$path can be String or ArrayRef. Any leading slashes ('/') in the path
+will be stripped, as to make it a valid Git path.  The same 
+grooming is done for the C<get()> and C<delete()> methods.
 
 $val can be String or Ref[HashRef|ArrayRef|Ref[Ref]] or blessed Object
+
 
 =head2 get($path)
 
