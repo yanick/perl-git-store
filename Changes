@@ -1,11 +1,20 @@
 Revision history for GitStore
 
+0.10 2012-06-17
+ [BUG FIXES]
+ - Prevents GitStore from dying if all files are deleted from the
+   repository.
+ - Leading '/' in files passed to 'set()', 'get()' and 'delete()' are
+   removed, as they are not valid Git paths.
+   https://github.com/fayland/perl-git-store/issues/2, thanks to Chris
+   Forbes for reporting.
+
+ [STATISTICS]
+ - code churn: 7 files changed, 128 insertions(+), 6 deletions(-)
+
 0.09 2012-06-07
  [ENHANCEMENTS]
  - Ported all uses of Git::Repository to Git::PurePerl
-
- [STATISTICS]
- - code churn: 4 files changed, 110 insertions(+), 69 deletions(-)
 
 0.08 2012-06-05
  - Add history() method.

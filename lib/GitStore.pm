@@ -88,10 +88,21 @@ sub load {
     }
 }
 
+sub _normalize_path {
+    my ( $self, $path ) = @_;
+
+    $path = join '/', @$path if ref $path eq 'ARRAY';
+
+    # Git doesn't like paths prefixed with a '/'
+    $path =~ s#^/+##;
+
+    return $path;
+}
+
 sub get {
     my ( $self, $path ) = @_;
     
-    $path = join('/', @$path) if ref $path eq 'ARRAY';
+    $path = $self->_normalize_path($path);
 
     if ( grep { $_ eq $path } @{$self->to_delete} ) {
         return;
@@ -109,7 +120,8 @@ sub get {
 sub set {
     my ( $self, $path, $content ) = @_;
     
-    $path = join('/', @$path) if ref $path eq 'ARRAY';
+    $path = $self->_normalize_path($path);
+
     $self->{to_add}->{$path} = $content;
 }
 
@@ -117,7 +129,7 @@ sub set {
 sub delete {
     my ( $self, $path ) = @_;
     
-    $path = join('/', @$path) if ref $path eq 'ARRAY';
+    $path = $self->_normalize_path($path);
     push @{$self->{to_delete}}, $path;
     
 }
@@ -137,8 +149,18 @@ sub commit {
             mode     => '100644',
             filename => $d->filename,
             sha1     => $d->sha1,
-        );;
+        );
     }
+
+    unless ( @new_de or %{$self->{to_add}} ) {
+        # everything was deleted. If given nothing, the NewObject::Tree
+        # below will go boom. Create a 'dummy' file so that Git is
+        # placated
+        # TODO find the correct way to commit an empty tree
+
+        $self->{to_add}{dummy} = 'dummy entry to keep Git happy';
+    }
+
     # for add those new
     foreach my $path ( keys %{$self->{to_add}} ) {
         my $content = $self->to_add->{$path};
@@ -254,7 +276,7 @@ GitStore - Git as versioned data store in Perl
 
 =head1 VERSION
 
-version 0.09
+version 0.10
 
 =head1 SYNOPSIS
 
@@ -308,7 +330,9 @@ It is used in the commit info
 
 Store $val as a $path file in Git
 
-$path can be String or ArrayRef
+$path can be String or ArrayRef. Any leading slashes ('/') in the path
+will be stripped, as to make it a valid Git path.  The same 
+grooming is done for the C<get()> and C<delete()> methods.
 
 $val can be String or Ref[HashRef|ArrayRef|Ref[Ref]] or blessed Object
 
@@ -370,6 +394,11 @@ run
     git checkout
     git pull origin master
     git push
+
+=head1 KNOWN BUGS
+
+If all files are deleted from the repository, a 'dummy' file
+will be created to keep Git happy.
 
 =head1 SEE ALSO
 

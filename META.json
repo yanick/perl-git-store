@@ -53,11 +53,11 @@
    "provides" : {
       "GitStore" : {
          "file" : "lib/GitStore.pm",
-         "version" : "0.09"
+         "version" : "0.10"
       },
       "GitStore::Revision" : {
          "file" : "lib/GitStore/Revision.pm",
-         "version" : "0.09"
+         "version" : "0.10"
       }
    },
    "release_status" : "stable",
@@ -73,7 +73,7 @@
          "web" : "https://github.com/yanick/perl-git-store"
       }
    },
-   "version" : "0.09",
+   "version" : "0.10",
    "x_authority" : "cpan:YANICK"
 }
 

@@ -4,7 +4,7 @@ GitStore - Git as versioned data store in Perl
 
 # VERSION
 
-version 0.09
+version 0.10
 
 # SYNOPSIS
 
@@ -55,7 +55,9 @@ It is used in the commit info
 
 Store $val as a $path file in Git
 
-$path can be String or ArrayRef
+$path can be String or ArrayRef. Any leading slashes ('/') in the path
+will be stripped, as to make it a valid Git path.  The same 
+grooming is done for the `get()` and `delete()` methods.
 
 $val can be String or Ref[HashRef|ArrayRef|Ref[Ref]] or blessed Object
 
@@ -118,6 +120,11 @@ run
     git checkout
     git pull origin master
     git push
+
+# KNOWN BUGS
+
+If all files are deleted from the repository, a 'dummy' file
+will be created to keep Git happy.
 
 # SEE ALSO
 
