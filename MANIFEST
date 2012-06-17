@@ -16,7 +16,9 @@ t/000-report-versions.t
 t/01-basic.t
 t/02-next.t
 t/03-next-next.t
+t/deleting-all.t
 t/history.t
+t/invalid-objects.t
 t/many-commits.t
 t/pod.t
 xt/release/unused-vars.t

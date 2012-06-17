@@ -2,3 +2,5 @@
 GitStore-*
 Makefile
 inc
+t/test-clone/
+t/test

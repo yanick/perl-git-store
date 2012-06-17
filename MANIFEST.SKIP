@@ -3,3 +3,4 @@
 ^Makefile$
 \.gitignore
 dist.ini
+t/test-clone
