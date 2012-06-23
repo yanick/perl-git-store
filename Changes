@@ -1,24 +1,27 @@
 Revision history for GitStore
 
 {{$NEXT}}
-
-0.10      2012-06-17
  [API CHANGES]
 
  [BUG FIXES]
- - Prevents GitStore from dying if all files are deleted from the repository.
- - Leading '/' in files passed to 'set()', 'get()' and 'delete()' are removed,
-    as they are not valid Git paths.
-    https://github.com/fayland/perl-git-store/issues/2,
-    thanks to Chris Forbes for reporting.
 
  [DOCUMENTATION]
 
  [ENHANCEMENTS]
+ - add 'all_head_directory_entries' method
 
  [NEW FEATURES]
 
  [STATISTICS]
+
+0.10 2012-06-17
+ [BUG FIXES]
+ - Prevents GitStore from dying if all files are deleted from the
+   repository.
+ - Leading '/' in files passed to 'set()', 'get()' and 'delete()' are
+   removed, as they are not valid Git paths.
+   https://github.com/fayland/perl-git-store/issues/2, thanks to Chris
+   Forbes for reporting.
 
 0.09 2012-06-07
  [ENHANCEMENTS]

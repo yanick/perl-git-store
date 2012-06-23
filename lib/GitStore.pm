@@ -36,7 +36,15 @@ has author => (
 } );
 
 
-has 'head_directory_entries' => ( is => 'rw', isa => 'ArrayRef', default => sub { [] } );
+has 'head_directory_entries' => ( 
+    traits => [ 'Array' ],
+    is => 'rw', 
+    isa => 'ArrayRef', 
+    default => sub { [] },
+    handles => {
+        all_head_directory_entries => 'elements',
+    },
+);
 has 'root' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
 has 'to_add' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
 has 'to_delete' => ( is => 'rw', isa => 'ArrayRef', default => sub { [] } );
@@ -140,11 +148,12 @@ sub commit {
     return unless ( scalar keys %{$self->{to_add}} or scalar @{$self->to_delete} );
 
     my @new_de;
-    my @directory_entries = @{ $self->head_directory_entries };
-    # remove those need deleted or added
-    foreach my $d ( @directory_entries ) {
-        next if ( grep { $d->filename eq $_ } @{ $self->to_delete } );
-        next if ( grep { $d->filename eq $_ } keys %{ $self->to_add } );
+    foreach my $d ( $self->all_head_directory_entries ) {
+        # remove those need deleted or added
+        next if grep { $d->filename eq $_ } 
+                        @{ $self->to_delete },  
+                        keys %{ $self->to_add };
+
         push @new_de, Git::PurePerl::NewDirectoryEntry->new(
             mode     => '100644',
             filename => $d->filename,
@@ -362,6 +371,12 @@ discard the B<set> changes
 Returns a list of L<GitStore::Revision> objects representing the changes
 brought to the I<$path>. The changes are returned in ascending commit order.
 
+=head1 INTERNAL METHODS
+
+=head2 all_head_directory_entries()
+
+Returns a list of all the L<Git::PurePerl::DirectoryEntry> objects
+contained in the head commit of the tracked branch.
 
 =head1 FAQ
 
