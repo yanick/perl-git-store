@@ -371,12 +371,6 @@ discard the B<set> changes
 Returns a list of L<GitStore::Revision> objects representing the changes
 brought to the I<$path>. The changes are returned in ascending commit order.
 
-=head1 INTERNAL METHODS
-
-=head2 all_head_directory_entries()
-
-Returns a list of all the L<Git::PurePerl::DirectoryEntry> objects
-contained in the head commit of the tracked branch.
 
 =head1 FAQ
 
