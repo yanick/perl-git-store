@@ -43,15 +43,3 @@ $gr->run( 'commit', '-m', 'adding foo/baz' );
 $gs = GitStore->new($directory);
 is $gs->get( 'foo/baz' ) => 'stuff' ;
 
-
-
-__END__
-
-my $gitobj = Git::PurePerl->init( directory => $directory );
-
-
-$gs->set( '/foo/bar' => 'hi there' );
-
-$gs->commit;
-
-die join "\n", map { $_->filename } $gs->all_head_directory_entries;

@@ -24,7 +24,6 @@ $t = $gs->get("$file.txt");
 is $t, undef;
 
 $gs->set("$file.txt", $time);
-$DB::single = 1;
 $gs->set(['dir', 'ref.txt'], { hash => 1, array => 2 } );
 $t = $gs->get("$file.txt");
 is $t, $time;
