@@ -1,7 +1,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 23;
+use Test::More tests => 1;
 
 use Git::PurePerl;
 use Path::Class;
