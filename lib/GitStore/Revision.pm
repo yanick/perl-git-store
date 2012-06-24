@@ -3,7 +3,7 @@ BEGIN {
   $GitStore::Revision::AUTHORITY = 'cpan:YANICK';
 }
 {
-  $GitStore::Revision::VERSION = '0.10';
+  $GitStore::Revision::VERSION = '0.11';
 }
 #ABSTRACT: the state of a given path for a specific commit
 
@@ -16,6 +16,7 @@ use Moose;
 use GitStore;
 use DateTime;
 use List::Util qw/ first /;
+use Path::Class;
 
 
 has sha1 => (
@@ -62,8 +63,9 @@ has file_object => (
     default => sub { 
         my $self = shift;
 
-        return first { $_->filename eq $self->path }
-                     $self->commit_object->tree->directory_entries;
+        $self->gitstore->_find_file( 
+            $self->commit_object->tree, file($self->path) 
+        );
     },
 );
 
@@ -90,7 +92,7 @@ GitStore::Revision - the state of a given path for a specific commit
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 

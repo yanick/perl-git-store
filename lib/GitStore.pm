@@ -1,4 +1,10 @@
 package GitStore;
+BEGIN {
+  $GitStore::AUTHORITY = 'cpan:YANICK';
+}
+{
+  $GitStore::VERSION = '0.11';
+}
 #ABSTRACT: Git as versioned data store in Perl
 
 use Moose;
@@ -6,12 +12,11 @@ use Moose::Util::TypeConstraints;
 use Git::PurePerl;
 use Storable qw(nfreeze thaw);
 
+use Path::Class qw/ dir file /;
+
 use List::Util qw/ first /;
 
 no warnings qw/ uninitialized /;
-
-our $VERSION = '0.07';
-our $AUTHORITY = 'cpan:FAYLAND';
 
 subtype 'PurePerlActor' =>
     as 'Git::PurePerl::Actor';
@@ -35,11 +40,44 @@ has author => (
         );
 } );
 
+sub _clean_directories {
+    my ( $self, $dir ) = @_;
 
-has 'head_directory_entries' => ( is => 'rw', isa => 'ArrayRef', default => sub { [] } );
+    $dir ||= $self->root;
+
+    my $nbr_files = keys %{ $dir->{FILES} };
+
+    for my $d ( keys %{ $dir->{DIRS} } ) {
+        if( my $f = $self->_clean_directories( $dir->{DIRS}{$d} ) ) {
+            $nbr_files += $f;
+        }
+        else {
+            delete $dir->{DIRS}{$d};
+        }
+    }
+
+    return $nbr_files;
+}
+
+sub _expand_directories {
+    my( $self, $object ) = @_;
+
+    my %dir = ( DIRS => {}, FILES => {} );
+
+    for my $entry ( map { $_->directory_entries } $object ) {
+        if ( $entry->object->isa( 'Git::PurePerl::Object::Tree' ) ) {
+            $dir{DIRS}{$entry->filename} 
+                = $self->_expand_directories( $entry->object );
+        }
+        else {
+            $dir{FILES}{$entry->filename} = $entry->sha1;
+        }
+    }
+
+    return \%dir;
+}
+
 has 'root' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
-has 'to_add' => ( is => 'rw', isa => 'HashRef', default => sub { {} } );
-has 'to_delete' => ( is => 'rw', isa => 'ArrayRef', default => sub { [] } );
 
 has 'git' => (
     is => 'ro',
@@ -75,17 +113,18 @@ sub load {
     my $self = shift;
     
     my $head = $self->git->ref_sha1('refs/heads/' . $self->branch);
-    if ( $head ) {
-        my $commit = $self->git->get_object($head);
-        my $tree = $commit->tree;
-        my @directory_entries = $tree->directory_entries;
-        $self->head_directory_entries(\@directory_entries); # for delete
-        my $root = {};
-        foreach my $d ( @directory_entries ) {
-            $root->{ $d->filename } = _cond_thaw( $d->object->content );
-        }
-        $self->root($root);
+
+    unless ( $head ) {
+        $self->root({ DIRS => {}, FILES => {} });
+        return;
     }
+
+    my $commit = $self->git->get_object($head);
+    my $tree = $commit->tree;
+
+    my $root = $self->_expand_directories( $tree );
+    $self->root($root);
+
 }
 
 sub _normalize_path {
@@ -102,85 +141,104 @@ sub _normalize_path {
 sub get {
     my ( $self, $path ) = @_;
     
-    $path = $self->_normalize_path($path);
+    $path = file( $self->_normalize_path($path) );
 
-    if ( grep { $_ eq $path } @{$self->to_delete} ) {
-        return;
-    }
-    if ( exists $self->to_add->{ $path } ) {
-        return $self->to_add->{ $path };
-    }
-    if ( exists $self->root->{ $path } ) {
-        return $self->root->{ $path };
-    }
-    
-    return;
+    my $dir = $self->_cd_dir($path) or return;
+
+    my $sha1 = $dir->{FILES}{$path->basename} or return;
+
+    my $object = $self->git->get_object($sha1) or return;
+
+    return _cond_thaw($object->content);
 }
 
 sub set {
     my ( $self, $path, $content ) = @_;
     
-    $path = $self->_normalize_path($path);
+    $path = file( $self->_normalize_path($path) );
 
-    $self->{to_add}->{$path} = $content;
+    my $dir = $self->_cd_dir($path,1) or return;
+
+    $content = nfreeze( $content ) if ( ref $content );
+
+    my $blob = Git::PurePerl::NewObject::Blob->new( content => $content );
+    $self->git->put_object($blob);
+
+    $dir->{FILES}{$path->basename} = $blob->sha1;
 }
 
 *remove = \&delete;
 sub delete {
     my ( $self, $path ) = @_;
     
-    $path = $self->_normalize_path($path);
-    push @{$self->{to_delete}}, $path;
+    $path = file( $self->_normalize_path($path) );
+
+    my $dir = $self->_cd_dir($path) or return;
+
+    return delete $dir->{FILES}{$path->basename};
+}
+
+sub _cd_dir {
+    my( $self, $path, $create ) = @_;
+
+    my $dir = $self->root;
+
+    for ( grep { !/^\.$/ } $path->dir->dir_list ) {
+        if ( $dir->{DIRS}{$_} ) {
+            $dir = $dir->{DIRS}{$_};
+        }
+        else {
+            return unless $create;
+            $dir = $dir->{DIRS}{$_} = { DIRS => {}, FILES => {} };
+        }
+    }
+
+    return $dir;
+}
+
+sub _build_new_directory_entry {
+    my( $self, $dir ) = @_;
+
+    my @children;
     
+    while ( my( $filename, $sha1 ) = each %{ $dir->{FILES} } ) {
+        push @children,
+            Git::PurePerl::NewDirectoryEntry->new(
+                mode     => '100644',
+                filename => $filename,
+                sha1     => $sha1,
+            );
+    }
+
+    while ( my( $dirname, $dir ) = each %{ $dir->{DIRS} } ) {
+        my $tree = $self->_build_new_directory_entry($dir);
+        push @children, Git::PurePerl::NewDirectoryEntry->new(
+            mode     => '040000',
+            filename => $dirname,
+            sha1     => $tree->sha1,
+        );
+    }
+
+    my $tree = Git::PurePerl::NewObject::Tree->new(
+        directory_entries => \@children,
+    );
+    $self->git->put_object($tree);
+
+    return $tree;
 }
 
 sub commit {
     my ( $self, $message ) = @_;
-    
-    return unless ( scalar keys %{$self->{to_add}} or scalar @{$self->to_delete} );
 
-    my @new_de;
-    my @directory_entries = @{ $self->head_directory_entries };
-    # remove those need deleted or added
-    foreach my $d ( @directory_entries ) {
-        next if ( grep { $d->filename eq $_ } @{ $self->to_delete } );
-        next if ( grep { $d->filename eq $_ } keys %{ $self->to_add } );
-        push @new_de, Git::PurePerl::NewDirectoryEntry->new(
-            mode     => '100644',
-            filename => $d->filename,
-            sha1     => $d->sha1,
-        );
-    }
-
-    unless ( @new_de or %{$self->{to_add}} ) {
-        # everything was deleted. If given nothing, the NewObject::Tree
-        # below will go boom. Create a 'dummy' file so that Git is
-        # placated
-        # TODO find the correct way to commit an empty tree
-
-        $self->{to_add}{dummy} = 'dummy entry to keep Git happy';
-    }
-
-    # for add those new
-    foreach my $path ( keys %{$self->{to_add}} ) {
-        my $content = $self->to_add->{$path};
-        $content = nfreeze( $content ) if ( ref $content );
-        my $blob = Git::PurePerl::NewObject::Blob->new( content => $content );
-        $self->git->put_object($blob);
-        my $de = Git::PurePerl::NewDirectoryEntry->new(
-            mode     => '100644',
-            filename => $path,
-            sha1     => $blob->sha1,
-        );
-        push @new_de, $de;
+    unless ( $self->_clean_directories ) {
+        # TODO surely there's a better way?
+        $self->set( '.gitignore/dummy', 'dummy file to keep git happy' );
     }
     
-    # commit
-    my $tree = Git::PurePerl::NewObject::Tree->new(
-        directory_entries => \@new_de,
-    );
-    $self->git->put_object($tree);
+    # TODO only commit if there were changes
     
+    my $tree = $self->_build_new_directory_entry( $self->root );
+
     # there might not be a parent, if it's a new branch
     my $parent = eval { $self->git->ref( 'refs/heads/'.$self->branch )->sha1 };
 
@@ -197,16 +255,12 @@ sub commit {
     $self->git->put_object($commit);
 
     # reload
-    $self->{to_add} = {};
-    $self->{to_delete} = [];
     $self->load;
 }
 
 sub discard {
     my $self = shift;
-    
-    $self->{to_add} = {};
-    $self->{to_delete} = [];
+
     $self->load;
 }
 
@@ -224,6 +278,27 @@ sub _cond_thaw {
     } else {
         return $data;
     }
+}
+
+sub _find_file {
+    my( $self, $tree, $path ) = @_;
+
+    my @path = grep { !/^\.$/ } $path->dir->dir_list;
+
+    if ( my $part = shift @path ) {
+        $DB::single = $part eq 'bar';
+
+        my $entry = first { $_->filename eq $part } $tree->directory_entries 
+            or return;
+
+        my $object = $self->git->get_object( $entry->sha1 );
+
+        return unless ref $object eq 'Git::PurePerl::Object::Tree';
+
+        return $self->_find_file( $object, file(@path,$path->basename) );
+    }
+
+    return first { $_->filename eq $path->basename } $tree->directory_entries;
 }
 
 sub history {
@@ -246,8 +321,7 @@ sub history {
     my %sha1_seen;
 
     for my $c ( @commits ) {
-        my $file = first { $_->filename eq $path } 
-                         $c->tree->directory_entries or next;
+        my $file = $self->_find_file( $c->tree, file($path) ) or next;
         push @history_commits, $c unless $sha1_seen{ $file->object->sha1 }++;        
     }
 
@@ -276,7 +350,7 @@ GitStore - Git as versioned data store in Perl
 
 =head1 VERSION
 
-version 0.10
+version 0.11
 
 =head1 SYNOPSIS
 

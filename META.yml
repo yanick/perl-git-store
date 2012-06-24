@@ -9,7 +9,6 @@ build_requires:
   File::Temp: 0
   FindBin: 0
   Module::Build: 0.3601
-  Path::Class: 0
   Scalar::Util: 0
   Test::More: 0.94
   perl: 5.004
@@ -25,16 +24,17 @@ name: GitStore
 provides:
   GitStore:
     file: lib/GitStore.pm
-    version: 0.10
+    version: 0.11
   GitStore::Revision:
     file: lib/GitStore/Revision.pm
-    version: 0.10
+    version: 0.11
 requires:
   DateTime: 0
   Git::PurePerl: 0
   List::Util: 0
   Moose: 0
   Moose::Util::TypeConstraints: 0
+  Path::Class: 0
   Storable: 0
   strict: 0
   warnings: 0
@@ -42,5 +42,5 @@ resources:
   bugtracker: http://rt.cpan.org/Public/Dist/Display.html?Name=GitStore
   homepage: http://search.cpan.org/dist/GitStore/
   repository: https://github.com/yanick/perl-git-store.git
-version: 0.10
+version: 0.11
 x_authority: cpan:YANICK

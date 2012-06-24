@@ -12,7 +12,6 @@ my %module_build_args = (
     "File::Temp" => 0,
     "FindBin" => 0,
     "Module::Build" => "0.3601",
-    "Path::Class" => 0,
     "Scalar::Util" => 0,
     "Test::More" => "0.94",
     "perl" => "5.004"
@@ -26,7 +25,7 @@ my %module_build_args = (
     "Yanick Champoux <yanick\@cpan.org>"
   ],
   "dist_name" => "GitStore",
-  "dist_version" => "0.10",
+  "dist_version" => "0.11",
   "license" => "perl",
   "module_name" => "GitStore",
   "recommends" => {},
@@ -37,6 +36,7 @@ my %module_build_args = (
     "List::Util" => 0,
     "Moose" => 0,
     "Moose::Util::TypeConstraints" => 0,
+    "Path::Class" => 0,
     "Storable" => 0,
     "strict" => 0,
     "warnings" => 0

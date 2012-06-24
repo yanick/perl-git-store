@@ -32,6 +32,7 @@
             "List::Util" : "0",
             "Moose" : "0",
             "Moose::Util::TypeConstraints" : "0",
+            "Path::Class" : "0",
             "Storable" : "0",
             "strict" : "0",
             "warnings" : "0"
@@ -43,7 +44,6 @@
             "File::Find" : "0",
             "File::Temp" : "0",
             "FindBin" : "0",
-            "Path::Class" : "0",
             "Scalar::Util" : "0",
             "Test::More" : "0.94",
             "perl" : "5.004"
@@ -53,11 +53,11 @@
    "provides" : {
       "GitStore" : {
          "file" : "lib/GitStore.pm",
-         "version" : "0.10"
+         "version" : "0.11"
       },
       "GitStore::Revision" : {
          "file" : "lib/GitStore/Revision.pm",
-         "version" : "0.10"
+         "version" : "0.11"
       }
    },
    "release_status" : "stable",
@@ -73,7 +73,7 @@
          "web" : "https://github.com/yanick/perl-git-store"
       }
    },
-   "version" : "0.10",
+   "version" : "0.11",
    "x_authority" : "cpan:YANICK"
 }
 

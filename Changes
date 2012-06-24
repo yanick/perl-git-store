@@ -1,5 +1,14 @@
 Revision history for GitStore
 
+0.11 2012-06-24
+ [BUG FIXES]
+ - files with directories where saved as filename '/foo/bar.txt' instead of
+   file 'bar.txt' in a directory 'foo'. Caused problems if dealing with a
+   generic git repository.
+
+ [STATISTICS]
+ - code churn: 7 files changed, 236 insertions(+), 84 deletions(-)
+
 0.10 2012-06-17
  [BUG FIXES]
  - Prevents GitStore from dying if all files are deleted from the
@@ -8,9 +17,6 @@ Revision history for GitStore
    removed, as they are not valid Git paths.
    https://github.com/fayland/perl-git-store/issues/2, thanks to Chris
    Forbes for reporting.
-
- [STATISTICS]
- - code churn: 7 files changed, 128 insertions(+), 6 deletions(-)
 
 0.09 2012-06-07
  [ENHANCEMENTS]

@@ -20,5 +20,7 @@ t/deleting-all.t
 t/history.t
 t/invalid-objects.t
 t/many-commits.t
+t/no-changes.t
 t/pod.t
+t/subpaths.t
 xt/release/unused-vars.t
