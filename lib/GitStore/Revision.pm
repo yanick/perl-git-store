@@ -29,6 +29,7 @@ use Moose;
 use GitStore;
 use DateTime;
 use List::Util qw/ first /;
+use Path::Class;
 
 =head1 METHODS
 
@@ -103,8 +104,9 @@ has file_object => (
     default => sub { 
         my $self = shift;
 
-        return first { $_->filename eq $self->path }
-                     $self->commit_object->tree->directory_entries;
+        $self->gitstore->_find_file( 
+            $self->commit_object->tree, file($self->path) 
+        );
     },
 );
 

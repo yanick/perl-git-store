@@ -4,11 +4,13 @@ Revision history for GitStore
  [API CHANGES]
 
  [BUG FIXES]
+ - files with directories where saved as filename '/foo/bar.txt' instead
+    of file 'bar.txt' in a directory 'foo'. Caused problems if dealing
+    with a generic git repository.
 
  [DOCUMENTATION]
 
  [ENHANCEMENTS]
- - add 'all_head_directory_entries' method
 
  [NEW FEATURES]
 
