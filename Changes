@@ -1,18 +1,11 @@
 Revision history for GitStore
 
-{{$NEXT}}
- [API CHANGES]
-
- [BUG FIXES]
-
- [DOCUMENTATION]
-
- [ENHANCEMENTS]
-
+0.12 2012-11-04
  [NEW FEATURES]
  - New list() method to list entries.
 
  [STATISTICS]
+ - code churn: 5 files changed, 69 insertions(+), 12 deletions(-)
 
 0.11 2012-06-24
  [BUG FIXES]

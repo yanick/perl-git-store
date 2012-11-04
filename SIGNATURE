@@ -1,0 +1,48 @@
+This file contains message digests of all files listed in MANIFEST,
+signed via the Module::Signature module, version 0.68.
+
+To verify the content in this distribution, first make sure you have
+Module::Signature installed, then type:
+
+    % cpansign -v
+
+It will check each file's integrity, as well as the signature's
+validity.  If "==> Signature verified OK! <==" is not displayed,
+the distribution may already have been compromised, and you should
+not run its Makefile.PL or Build.PL.
+
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
+
+SHA1 626b91f4c8aa0e6254f6eb214da08bd691871d47 Build.PL
+SHA1 6f9e3fe642428384041521e51ce6e312a1af77d8 Changes
+SHA1 8fefb8f8dd2355c6eed54fbd332755505d187228 INSTALL
+SHA1 65b59293969bb3e6202f71681f94325770d4a528 LICENSE
+SHA1 dc93d8c7df3777fb2ebcbe163956ba997fce64c6 MANIFEST
+SHA1 e09cd9d3be7aeeae6f5e7dca7cd6c5ea36aeb6ba META.json
+SHA1 100cb9c28457d38a8920f5c01b6902e12476f975 META.yml
+SHA1 40b826b58415410c3b2336b3e1dca7700af2b3c8 README
+SHA1 f9cd405be24475b8ea509440b137584c53cc385e README.mkdn
+SHA1 b0564a7f79c062a5f97e6a7bb5791ea20845a40c lib/GitStore.pm
+SHA1 6229e146da2519000e2fb556515814319943c5c0 lib/GitStore/Revision.pm
+SHA1 3cbe905b92fbc69d59a06031d5ce6c837b352aa2 t/00-compile.t
+SHA1 1b43651f21c184c199194385323aa15b36365ff5 t/00-load.t
+SHA1 473906254ecd96009795d4b7fbc82fac48c03ecd t/000-report-versions.t
+SHA1 1f1f5ca0a3249c3e763738dacdf8fdda61e01a6d t/01-basic.t
+SHA1 ba7914c531452b1940d0e21b8dc91c0e3e8a2c8c t/02-next.t
+SHA1 dc51223b4a19fec4d4c913e16a9be7a20a911a9b t/03-next-next.t
+SHA1 1550984a09c86e89ad6e2f1beb440f9c1094ee50 t/deleting-all.t
+SHA1 f294e44d6340f9a4e9597f407198fc12f033a2f1 t/history.t
+SHA1 d331d97e4272b6356cb8ff566bf64d40c9fefd8b t/invalid-objects.t
+SHA1 99d6f54749435b5a2ba0233cae7b299cd34e42a7 t/many-commits.t
+SHA1 98a81a4c64a3ac0158424e1f43fe892a8e29e4c2 t/no-changes.t
+SHA1 640935336dc1123c0069bcf5432bcaedc2cf22d3 t/pod.t
+SHA1 3a20be87a47d46b59ead42effb0759373c788ca4 t/subpaths.t
+SHA1 ec3f84bfd7a9ce3246e7592f4134100c6b5ce02b xt/release/unused-vars.t
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1.4.11 (GNU/Linux)
+
+iEYEARECAAYFAlCWghYACgkQ34Hwf+GwC4xeEQCgsKydo1GZOA+NCRv0Ii31of49
+/eoAoKaOwiiH3LUaUimkLdUztoe80R1x
+=Qim4
+-----END PGP SIGNATURE-----

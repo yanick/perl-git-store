@@ -1,6 +1,9 @@
 NAME
     GitStore - Git as versioned data store in Perl
 
+VERSION
+    version 0.12
+
 SYNOPSIS
         use GitStore;
 
@@ -10,8 +13,8 @@ SYNOPSIS
         $gs->commit();
         $gs->set( 'yyy/xxx.log', 'Log me' );
         $gs->discard();
-        
-    # later or in another pl
+    
+        # later or in another pl
         my $val = $gs->get( 'user/obj.txt' ); # $val is the same as $obj
         my $val = $gs->get( 'config/wiki.txt' ); # $val is { hashref => 1 } );
         my $val = $gs->get( ['yyy', 'xxx.log' ] ); # $val is undef since discard
@@ -26,7 +29,8 @@ METHODS
         GitStore->new( repo => '/path/to/repo', author => 'Someone Unknown <unknown\@what.com>' );
 
     repo
-        your git dir (without .git)
+        your git directory or work directory (*GitStore* will assume it's a
+        work directory if it doesn't end with ".git").
 
     branch
         your branch name, default is 'master'
@@ -41,7 +45,9 @@ METHODS
 
     Store $val as a $path file in Git
 
-    $path can be String or ArrayRef
+    $path can be String or ArrayRef. Any leading slashes ('/') in the path
+    will be stripped, as to make it a valid Git path. The same grooming is
+    done for the "get()" and "delete()" methods.
 
     $val can be String or Ref[HashRef|ArrayRef|Ref[Ref]] or blessed Object
 
@@ -68,6 +74,17 @@ METHODS
 
     discard the set changes
 
+  history($path)
+    Returns a list of GitStore::Revision objects representing the changes
+    brought to the *$path*. The changes are returned in ascending commit
+    order.
+
+  list($regex)
+        @entries = $gs->list( qr/\.txt$/ );
+
+    Returns a list of all entries in the repository, possibly filtered by
+    the optional *$regex*.
+
 FAQ
   why the files are not there?
     run
@@ -82,14 +99,18 @@ FAQ
         # use GitStore->new('/path/to/this/sandbox')
         # set something
         git checkout
-        
-    # follows are for remote git url
+    
+        # follows are for remote git url
         git remote add origin git@github.com:fayland/sandbox2.git
         git push origin master
         # do more GitStore->new('/path/to/this/sandbox') later
         git checkout
         git pull origin master
         git push
+
+KNOWN BUGS
+    If all files are deleted from the repository, a 'dummy' file will be
+    created to keep Git happy.
 
 SEE ALSO
     Article
@@ -105,12 +126,14 @@ SEE ALSO
 Git URL
     <http://github.com/fayland/perl-git-store/tree/master>
 
-AUTHOR
-    Fayland Lam, "<fayland at gmail.com>"
+AUTHORS
+    *   Fayland Lam <fayland@gmail.com>
 
-COPYRIGHT & LICENSE
-    Copyright 2009 Fayland Lam, all rights reserved.
+    *   Yanick Champoux <yanick@cpan.org>
 
-    This program is free software; you can redistribute it and/or modify it
-    under the same terms as Perl itself.
+COPYRIGHT AND LICENSE
+    This software is copyright (c) 2012 by Fayland Lam <fayland@gmail.com>.
+
+    This is free software; you can redistribute it and/or modify it under
+    the same terms as the Perl 5 programming language system itself.
 

@@ -1,25 +1,12 @@
 package GitStore::Revision;
+BEGIN {
+  $GitStore::Revision::AUTHORITY = 'cpan:YANICK';
+}
+{
+  $GitStore::Revision::VERSION = '0.12';
+}
 #ABSTRACT: the state of a given path for a specific commit
 
-=head1 SYNOPSIS
-
-   use GitStore;
-
-   my $gs = GitStore->new('/path/to/repo');
-
-   my @history = $gs->history( 'path/to/object' );
-
-   for my $rev ( @history ) {
-        say "modified at: ", $rev->timestamp;
-        say "commit message was: ", $rev->message;
-        say "===\n", $rev->content;
-   }
-
-=head1 DESCRIPTION
-
-Represents an object in a  L<GitStore> at a specific commit.
-
-=cut
 
 use strict;
 use warnings;
@@ -31,37 +18,14 @@ use DateTime;
 use List::Util qw/ first /;
 use Path::Class;
 
-=head1 METHODS
-
-=head2 sha1
-
-Returns the SHA-1 of the commit.
-
-=cut
 
 has sha1 => (
     is => 'ro',
     required => 1,
 );
 
-=head2 commit_object
 
-Returns the L<Git::PurePerl::Object::Commit> object containing the file revision.
 
-=cut
-
-=head2 timestamp
-
-Returns the commit time of the revision as a L<DateTime> object.
-
-=cut
-
-=head2 message
-
-Returns the commit message of the revision.  Note that the message might have
-additional trailing carriage returns.
-
-=cut
 
 has commit_object => (
     is => 'ro',
@@ -77,11 +41,6 @@ has commit_object => (
     },
 );
 
-=head2 path
-
-Returns the path of the L<GitStore> object.
-
-=cut
 
 has path => (
     is => 'ro',
@@ -111,12 +70,6 @@ has file_object => (
 );
 
 
-=head2 content
-
-Returns the content of the object.  If the object is a frozen ref, the
-structure will be returned, like for `GitStore`'s `get()`.
-
-=cut
 
 sub content {
     my $self = shift;
@@ -129,3 +82,84 @@ sub content {
 
 __PACKAGE__->meta->make_immutable;
 1;
+
+__END__
+
+=pod
+
+=head1 NAME
+
+GitStore::Revision - the state of a given path for a specific commit
+
+=head1 VERSION
+
+version 0.12
+
+=head1 SYNOPSIS
+
+   use GitStore;
+
+   my $gs = GitStore->new('/path/to/repo');
+
+   my @history = $gs->history( 'path/to/object' );
+
+   for my $rev ( @history ) {
+        say "modified at: ", $rev->timestamp;
+        say "commit message was: ", $rev->message;
+        say "===\n", $rev->content;
+   }
+
+=head1 DESCRIPTION
+
+Represents an object in a  L<GitStore> at a specific commit.
+
+=head1 METHODS
+
+=head2 sha1
+
+Returns the SHA-1 of the commit.
+
+=head2 commit_object
+
+Returns the L<Git::PurePerl::Object::Commit> object containing the file revision.
+
+=head2 timestamp
+
+Returns the commit time of the revision as a L<DateTime> object.
+
+=head2 message
+
+Returns the commit message of the revision.  Note that the message might have
+additional trailing carriage returns.
+
+=head2 path
+
+Returns the path of the L<GitStore> object.
+
+=head2 content
+
+Returns the content of the object.  If the object is a frozen ref, the
+structure will be returned, like for `GitStore`'s `get()`.
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Fayland Lam <fayland@gmail.com>
+
+=item *
+
+Yanick Champoux <yanick@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Fayland Lam <fayland@gmail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut

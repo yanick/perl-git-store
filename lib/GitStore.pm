@@ -1,4 +1,10 @@
 package GitStore;
+BEGIN {
+  $GitStore::AUTHORITY = 'cpan:YANICK';
+}
+{
+  $GitStore::VERSION = '0.12';
+}
 #ABSTRACT: Git as versioned data store in Perl
 
 use Moose;
@@ -371,8 +377,18 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
+
 __END__
 
+=pod
+
+=head1 NAME
+
+GitStore - Git as versioned data store in Perl
+
+=head1 VERSION
+
+version 0.12
 
 =head1 SYNOPSIS
 
@@ -389,7 +405,6 @@ __END__
     my $val = $gs->get( 'user/obj.txt' ); # $val is the same as $obj
     my $val = $gs->get( 'config/wiki.txt' ); # $val is { hashref => 1 } );
     my $val = $gs->get( ['yyy', 'xxx.log' ] ); # $val is undef since discard
-    
 
 =head1 DESCRIPTION
 
@@ -433,7 +448,6 @@ will be stripped, as to make it a valid Git path.  The same
 grooming is done for the C<get()> and C<delete()> methods.
 
 $val can be String or Ref[HashRef|ArrayRef|Ref[Ref]] or blessed Object
-
 
 =head2 get($path)
 
@@ -528,3 +542,25 @@ L<http://github.com/georgi/git_store/tree/master>
 
 L<http://github.com/fayland/perl-git-store/tree/master>
 
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Fayland Lam <fayland@gmail.com>
+
+=item *
+
+Yanick Champoux <yanick@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2012 by Fayland Lam <fayland@gmail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
