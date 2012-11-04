@@ -4,6 +4,7 @@ package GitStore;
 use Moose;
 use Moose::Util::TypeConstraints;
 use Git::PurePerl;
+use Carp;
 use Storable qw(nfreeze thaw);
 
 use Path::Class qw/ dir file /;
@@ -102,16 +103,21 @@ sub BUILDARGS {
     }
 }
 
+sub branch_head {
+    my ( $self, $branch ) = @_;
+    $branch ||= $self->branch;
+
+    return $self->git->ref_sha1('refs/heads/' . $branch);
+}
+
 # Load the current head version from repository. 
 sub load {
     my $self = shift;
     
-    my $head = $self->git->ref_sha1('refs/heads/' . $self->branch);
-
-    unless ( $head ) {
+    my $head = $self->branch_head or do {
         $self->root({ DIRS => {}, FILES => {} });
         return;
-    }
+    };
 
     my $commit = $self->git->get_object($head);
     my $tree = $commit->tree;
@@ -280,8 +286,6 @@ sub _find_file {
     my @path = grep { !/^\.$/ } $path->dir->dir_list;
 
     if ( my $part = shift @path ) {
-        $DB::single = $part eq 'bar';
-
         my $entry = first { $_->filename eq $part } $tree->directory_entries 
             or return;
 
@@ -329,6 +333,39 @@ sub history {
 
 }
 
+sub list {
+    my( $self, $regex ) = @_;
+
+    croak "'$regex' is not a a regex"
+        if $regex and ref $regex ne 'Regexp';
+
+    my $head = $self->branch_head or return;
+
+    my $commit = $self->git->get_object($head);
+    my $tree = $commit->tree;
+
+    my $root = $self->_expand_directories( $tree );
+
+    my @dirs = ( [ '', $root ] );
+    my @entries;
+
+    while( my $dir = shift @dirs ) {
+        my $path = $dir->[0];
+        $dir = $dir->[1];
+        unshift @dirs, [ "$path/$_" => $dir->{DIRS}{$_} ]
+            for sort keys  %{$dir->{DIRS}}; 
+
+        for ( sort keys %{$dir->{FILES}} ) {
+            my $f = "$path/$_";
+            $f =~ s#^/##;  # TODO improve this
+            next if $regex and $f !~ $regex;
+            push @entries, $f;
+        }
+    }
+
+    return @entries;
+}
+
 
 no Moose;
 __PACKAGE__->meta->make_immutable;
@@ -370,7 +407,8 @@ It is inspired by the Python and Ruby binding. check SEE ALSO
 
 =item repo
 
-your git dir (without .git)
+your git directory or work directory (I<GitStore> will assume it's a work
+directory if it doesn't end with C<.git>).
 
 =item branch
 
@@ -430,6 +468,12 @@ discard the B<set> changes
 Returns a list of L<GitStore::Revision> objects representing the changes
 brought to the I<$path>. The changes are returned in ascending commit order.
 
+=head2 list($regex)
+
+    @entries = $gs->list( qr/\.txt$/ );
+
+Returns a list of all entries in the repository, possibly filtered by the 
+optional I<$regex>.
 
 =head1 FAQ
 

@@ -1,6 +1,6 @@
 #!perl
 
-use Test::More tests => 8;
+use Test::More tests => 9;
 use Git::PurePerl;
 use Path::Class;
 use GitStore;
@@ -49,4 +49,8 @@ $gs->set("gitobj.txt", $gitobj );
 $gs->commit;
 $gs->set("not_committed.txt", 'No');
 
-1;
+subtest "list()" => sub {
+    plan tests => 2;
+    is_deeply [ $gs->list ] => [qw/ committed.txt gitobj.txt /], "list()";
+    is_deeply [ $gs->list(qr/obj/) ] => [qw/ gitobj.txt /], "list(qr/obj/)";
+};
