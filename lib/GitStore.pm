@@ -11,6 +11,8 @@ use Path::Class qw/ dir file /;
 
 use List::Util qw/ first /;
 
+use GitStore::Revision;
+
 no warnings qw/ uninitialized /;
 
 subtype 'PurePerlActor' =>
@@ -24,6 +26,7 @@ coerce PurePerlActor
 };
 
 has 'repo' => ( is => 'ro', isa => 'Str', required => 1 );
+
 has 'branch' => ( is => 'rw', isa => 'Str', default => 'master' );
 has author => ( 
     is => 'rw', 
@@ -136,6 +139,42 @@ sub _normalize_path {
     $path =~ s#^/+##;
 
     return $path;
+}
+
+sub get_revision {
+    my ( $self, $path ) = @_;
+
+    $path = file( $self->_normalize_path($path) );
+
+    my $head = $self->branch_head
+        or return;
+
+    my $commit = $self->git->get_object($head);
+    my @q = ( $commit );
+
+    my $file = $self->_find_file( $commit->tree, $path )
+        or return;
+
+    my $latest_file_sha1 = $file->object->sha1;
+    my $last_commit;
+
+    my @commits;
+    while ( @q ) {
+        push @q, $q[0]->parents;
+        $last_commit = $commit;
+        $commit = shift @q;
+
+        my $f = $self->_find_file( $commit->tree, file($path) )
+            or last;
+
+        last if $f->object->sha1 ne $latest_file_sha1;
+    }
+
+    return GitStore::Revision->new(
+        gitstore => $self,
+        path     => $path,
+        sha1     => $last_commit->sha1,
+    );
 }
 
 sub get {
@@ -302,9 +341,7 @@ sub _find_file {
 sub history {
     my ( $self, $path ) = @_;
 
-    require GitStore::Revision;
-
-    my $head = $self->git->ref_sha1('refs/heads/' . $self->branch)
+    my $head = $self->branch_head
         or return;
 
     my @q = ( $self->git->get_object($head) );
@@ -352,7 +389,7 @@ sub list {
     while( my $dir = shift @dirs ) {
         my $path = $dir->[0];
         $dir = $dir->[1];
-        unshift @dirs, [ "$path/$_" => $dir->{DIRS}{$_} ]
+        push @dirs, [ "$path/$_" => $dir->{DIRS}{$_} ]
             for sort keys  %{$dir->{DIRS}}; 
 
         for ( sort keys %{$dir->{FILES}} ) {
@@ -443,6 +480,11 @@ $val can be String or Ref[HashRef|ArrayRef|Ref[Ref]] or blessed Object
 Get $val from the $path file
 
 $path can be String or ArrayRef
+
+=head2 get_revision( $path )
+
+Like C<get()>, but returns the L<GitStore::Revision> object corresponding to
+the latest Git revision on the monitored branch for which C<$path> changed.
 
 =head2 delete($path)
 
