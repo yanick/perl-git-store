@@ -1,6 +1,6 @@
 #!perl
 
-use Test::More tests => 9;
+use Test::More tests => 10;
 use Git::PurePerl;
 use Path::Class;
 use GitStore;
@@ -28,12 +28,22 @@ $gs->set(['dir', 'ref.txt'], { hash => 1, array => 2 } );
 $t = $gs->get("$file.txt");
 is $t, $time;
 
-$gs->commit;
+$gs->commit( "stuff" );
 $t = $gs->get("$file.txt");
 is $t, $time;
 my $refval = $gs->get('dir/ref.txt');
 is $refval->{hash}, 1;
 is $refval->{array}, 2;
+
+subtest 'get_revision' => sub {
+    plan tests => 3;
+
+    my $rev = $gs->get_revision( "$file.txt" );
+    like $rev->timestamp => qr/\d{4}-\d{2}-\d{2}T\d\d:\d\d:\d\d/, 'timestamp';
+    is $rev->message, 'stuff', 'message';
+
+    is $rev->content => $time, 'content';
+};
 
 # after delete
 $gs->delete("$file.txt");
@@ -54,3 +64,4 @@ subtest "list()" => sub {
     is_deeply [ $gs->list ] => [qw/ committed.txt gitobj.txt /], "list()";
     is_deeply [ $gs->list(qr/obj/) ] => [qw/ gitobj.txt /], "list(qr/obj/)";
 };
+
