@@ -1,6 +1,8 @@
 Revision history for GitStore
 
 {{$NEXT}}
+
+0.13      2012-11-11
  [NEW FEATURES]
  - New get_revision() method.
 
