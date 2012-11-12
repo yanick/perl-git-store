@@ -158,7 +158,6 @@ sub get_revision {
     my $latest_file_sha1 = $file->object->sha1;
     my $last_commit;
 
-    my @commits;
     while ( @q ) {
         push @q, $q[0]->parents;
         $last_commit = $commit;
