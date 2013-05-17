@@ -8,11 +8,17 @@ Revision history for GitStore
  [DOCUMENTATION]
 
  [ENHANCEMENTS]
- - add MooseX::Storage::IO::GitStore
 
  [NEW FEATURES]
 
  [STATISTICS]
+
+0.15 2013-05-16
+ [ENHANCEMENTS]
+ - add MooseX::Storage::IO::GitStore
+
+ [STATISTICS]
+ - code churn: 4 files changed, 160 insertions(+), 3 deletions(-)
 
 0.14 2013-05-16
  [ENHANCEMENTS]
