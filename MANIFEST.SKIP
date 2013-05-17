@@ -1,7 +1,0 @@
-^MANIFEST\.SKIP$
-^GitStore
-^Makefile$
-\.gitignore
-dist.ini
-t/test-clone
-project.vim
