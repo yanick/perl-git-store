@@ -11,6 +11,7 @@ README.mkdn
 SIGNATURE
 lib/GitStore.pm
 lib/GitStore/Revision.pm
+lib/MooseX/Storage/IO/GitStore.pm
 t/00-compile.t
 t/00-load.t
 t/000-report-versions-tiny.t
@@ -22,6 +23,7 @@ t/deleting-all.t
 t/history.t
 t/invalid-objects.t
 t/many-commits.t
+t/moosex-storage.t
 t/no-changes.t
 t/pod.t
 t/serializer.t

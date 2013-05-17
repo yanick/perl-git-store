@@ -8,6 +8,7 @@ Revision history for GitStore
  [DOCUMENTATION]
 
  [ENHANCEMENTS]
+ - add MooseX::Storage::IO::GitStore
 
  [NEW FEATURES]
 
