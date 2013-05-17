@@ -13,6 +13,7 @@ Revision history for GitStore
  [DOCUMENTATION]
 
  [ENHANCEMENTS]
+ - serialization is now configurable.
 
  [STATISTICS]
 

@@ -121,9 +121,7 @@ structure will be returned, like for `GitStore`'s `get()`.
 sub content {
     my $self = shift;
 
-    GitStore::_cond_thaw(
-        scalar $self->file_object->object->content
-    );
+    $self->gitstore->deserializer->($self->gitstore,$self->path,$self->file_object->object->content);
 }
 
 
