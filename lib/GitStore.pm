@@ -66,6 +66,12 @@ has deserializer => (
     },
 );
 
+has autocommit => (
+    is      => 'ro',
+    isa     => 'Bool',
+    default => 0,
+);
+
 sub _clean_directories {
     my ( $self, $dir ) = @_;
 
@@ -230,8 +236,13 @@ sub set {
     my $blob = Git::PurePerl::NewObject::Blob->new( content => $content );
     $self->git->put_object($blob);
 
-    $dir->{FILES}{$path->basename} = $blob->sha1;
+    return $dir->{FILES}{$path->basename} = $blob->sha1;
 }
+
+after [ 'set', 'delete' ] => sub {
+    my $self = shift;
+    $self->commit if $self->autocommit;
+};
 
 *remove = \&delete;
 sub delete {
@@ -521,6 +532,12 @@ be:
 The default deserializer will try to deserialize the value
 retrieved from the store via L<Storable/thaw> and, if this fails,
 return the value verbatim.
+
+=item autocommit
+
+If set to C<true>, any call to C<set()> or C<delete()> will automatically call an
+implicit C<commit()>. Defaults to C<false>.
+
 =back
 
 =head2 set($path, $val)
