@@ -2,10 +2,6 @@ Revision history for GitStore
 
 {{$NEXT}}
 
-0.13      2012-11-11
- [NEW FEATURES]
- - New get_revision() method.
-
  [API CHANGES]
 
  [BUG FIXES]
@@ -17,6 +13,13 @@ Revision history for GitStore
  - new 'autocommit' attribute.
 
  [STATISTICS]
+
+0.13 2012-11-11
+ [NEW FEATURES]
+ - New get_revision() method.
+
+ [STATISTICS]
+ - code churn: 4 files changed, 67 insertions(+), 7 deletions(-)
 
 0.12      2012-11-04
  [NEW FEATURES]
