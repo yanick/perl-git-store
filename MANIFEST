@@ -1,4 +1,5 @@
 Build.PL
+CONTRIBUTORS
 Changes
 INSTALL
 LICENSE
@@ -12,15 +13,17 @@ lib/GitStore.pm
 lib/GitStore/Revision.pm
 t/00-compile.t
 t/00-load.t
-t/000-report-versions.t
+t/000-report-versions-tiny.t
 t/01-basic.t
 t/02-next.t
 t/03-next-next.t
+t/autocommit.t
 t/deleting-all.t
 t/history.t
 t/invalid-objects.t
 t/many-commits.t
 t/no-changes.t
 t/pod.t
+t/serializer.t
 t/subpaths.t
 xt/release/unused-vars.t
