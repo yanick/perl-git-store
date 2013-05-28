@@ -224,6 +224,17 @@ sub get {
     return $self->deserializer->($self,$path,$object->content);
 }
 
+sub exist {
+    my ( $self, $path ) = @_;
+
+    $path = file( $self->_normalize_path($path) );
+
+    my $dir = $self->_cd_dir($path) or return;
+
+    return $dir->{FILES}{$path->basename};
+}
+
+
 sub set {
     my ( $self, $path, $content ) = @_;
     
@@ -587,6 +598,11 @@ commit the B<set> changes into Git
     $gs->discard();
 
 discard the B<set> changes
+
+=head2 exist($path)
+
+Returns I<true> if an object exists at the given path.
+
 
 =head2 history($path)
 

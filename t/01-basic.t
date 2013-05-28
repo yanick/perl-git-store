@@ -1,6 +1,6 @@
 #!perl
 
-use Test::More tests => 10;
+use Test::More tests => 11;
 use Git::PurePerl;
 use Path::Class;
 use GitStore;
@@ -64,4 +64,16 @@ subtest "list()" => sub {
     is_deeply [ $gs->list ] => [qw/ committed.txt gitobj.txt /], "list()";
     is_deeply [ $gs->list(qr/obj/) ] => [qw/ gitobj.txt /], "list(qr/obj/)";
 };
+
+subtest 'exist()' => sub {
+    plan tests => 3;
+
+    $gs->set( a => 0 );
+    $gs->set( b => '' );
+    $gs->commit;
+
+    ok $gs->exist($_), $_  for 'a'..'b';
+    ok !$gs->exist($_), $_ for 'd';
+}
+
 
