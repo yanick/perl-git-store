@@ -7,6 +7,7 @@ use Git::PurePerl;
 use Carp;
 
 use Path::Class qw/ dir file /;
+use Path::Tiny;
 
 use List::Util qw/ first /;
 
@@ -145,6 +146,15 @@ sub branch_head {
     $branch ||= $self->branch;
 
     return $self->git->ref_sha1('refs/heads/' . $branch);
+}
+
+sub create {
+    my( $class, $dir ) = @_;
+
+    path($dir)->mkpath;
+    Git::PurePerl->init( directory => $dir );
+
+    return $class->new($dir);
 }
 
 # Load the current head version from repository. 
@@ -464,6 +474,15 @@ __END__
 =head1 DESCRIPTION
 
 It is inspired by the Python and Ruby binding. check SEE ALSO
+
+=head1 CLASS FUNCTIONS
+
+=head2 create( $directory )
+
+Creates the directory, initialize it as a git repository,
+and returns its associated C<GitStore> object.
+
+    my $gs = GitStore->create( '/tmp/mystore' );
 
 =head1 METHODS
 
