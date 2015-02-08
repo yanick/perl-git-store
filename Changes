@@ -1,19 +1,12 @@
 Revision history for GitStore
 
-{{$NEXT}}
- [API CHANGES]
-
- [BUG FIXES]
-
- [DOCUMENTATION]
-
+0.16 2015-02-07
  [ENHANCEMENTS]
  - add exist() method.
  - add create() function.
 
- [NEW FEATURES]
-
  [STATISTICS]
+ - code churn: 11 files changed, 146 insertions(+), 64 deletions(-)
 
 0.15 2013-05-16
  [ENHANCEMENTS]

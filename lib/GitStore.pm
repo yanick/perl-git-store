@@ -1,6 +1,9 @@
 package GitStore;
+BEGIN {
+  $GitStore::AUTHORITY = 'cpan:YANICK';
+}
 #ABSTRACT: Git as versioned data store in Perl
-
+$GitStore::VERSION = '0.16';
 use Moose;
 use Moose::Util::TypeConstraints;
 use Git::PurePerl;
@@ -451,8 +454,20 @@ no Moose;
 __PACKAGE__->meta->make_immutable;
 
 1;
+
 __END__
 
+=pod
+
+=encoding UTF-8
+
+=head1 NAME
+
+GitStore - Git as versioned data store in Perl
+
+=head1 VERSION
+
+version 0.16
 
 =head1 SYNOPSIS
 
@@ -469,7 +484,6 @@ __END__
     my $val = $gs->get( 'user/obj.txt' ); # $val is the same as $obj
     my $val = $gs->get( 'config/wiki.txt' ); # $val is { hashref => 1 } );
     my $val = $gs->get( ['yyy', 'xxx.log' ] ); # $val is undef since discard
-    
 
 =head1 DESCRIPTION
 
@@ -584,7 +598,6 @@ grooming is done for the C<get()> and C<delete()> methods.
 
 $val can be String or Ref[HashRef|ArrayRef|Ref[Ref]] or blessed Object
 
-
 =head2 get($path)
 
     $gs->get( 'user/obj.txt' );
@@ -621,7 +634,6 @@ discard the B<set> changes
 =head2 exist($path)
 
 Returns I<true> if an object exists at the given path.
-
 
 =head2 history($path)
 
@@ -688,3 +700,25 @@ L<http://github.com/georgi/git_store/tree/master>
 
 L<http://github.com/fayland/perl-git-store/tree/master>
 
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Fayland Lam <fayland@gmail.com>
+
+=item *
+
+Yanick Champoux <yanick@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2015 by Fayland Lam <fayland@gmail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
