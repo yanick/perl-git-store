@@ -4,7 +4,6 @@ Revision history for GitStore
  [API CHANGES]
 
  [BUG FIXES]
- - Tweak test as cloning was reported as a failure.
 
  [DOCUMENTATION]
 
@@ -13,6 +12,13 @@ Revision history for GitStore
  [NEW FEATURES]
 
  [STATISTICS]
+
+0.17 2015-02-08
+ [BUG FIXES]
+ - Tweak test as cloning was reported as a failure.
+
+ [STATISTICS]
+ - code churn: 2 files changed, 12 insertions(+), 5 deletions(-)
 
 0.16 2015-02-07
  [ENHANCEMENTS]
