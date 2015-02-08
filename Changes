@@ -9,6 +9,7 @@ Revision history for GitStore
 
  [ENHANCEMENTS]
  - add exist() method.
+ - add create() function.
 
  [NEW FEATURES]
 
