@@ -1,3 +1,4 @@
+t/stores
 .build
 GitStore-*
 Makefile

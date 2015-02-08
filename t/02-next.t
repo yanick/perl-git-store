@@ -5,23 +5,44 @@ use FindBin qw/$Bin/;
 use GitStore;
 use Path::Class;
 
-# init the test
-my $directory = "$Bin/test";
+use lib 't/lib';
+use Utils;
+
+my $directory;
+
+{ package Foo; use Moose; has x => ( is => 'ro' ); }
+
+my $foo = Foo->new( x => 'y' );
+
+{
+    my $gs = new_gitstore();
+    $directory = $gs->repo;
+
+    $gs->set("committed.txt", 'Yes');
+    $gs->set("gitobj.txt", $foo );
+    $gs->commit;
+    $gs->set("not_committed.txt", 'No');
+}
 
 my $gs = GitStore->new($directory);
 
-# from 02-basic.t
-my $val = $gs->get("committed.txt");
-is $val, 'Yes';
-$val = $gs->get("not_committed.txt");
-is $val, undef;
-my $gitobj = $gs->get("gitobj.txt");
-isa_ok($gitobj, "Git::PurePerl");
-is dir($gitobj->directory)->as_foreign('Unix'), dir($directory)->as_foreign('Unix');
+is $gs->get("committed.txt") => 'Yes', 'was commited';
+is $gs->get("not_committed.txt") => undef, 'was not';
 
-# for 03-next-next.t
-$gs->delete("committed.txt");
-$gs->set("committed2.txt", 'Yes');
-$gs->commit();
+subtest "objects are preserved" => sub {
+    my $gitobj = $gs->get("gitobj.txt");
+    isa_ok $gitobj => 'Foo';
+    is $gitobj->x, $foo->x;
+};
 
-1;
+subtest 'delete across instances' => sub {
+    {
+        my $gs = GitStore->new($directory);
+        $gs->delete('commited.txt');
+        is $gs->get('commited.txt') => undef, 'file is gone';
+    }
+    {
+        my $gs = GitStore->new($directory);
+        is $gs->get('commited.txt') => undef, 'file is really gone';
+    }
+};

@@ -4,20 +4,18 @@ use warnings;
 use Test::More;
 
 use Git::PurePerl;
-use Path::Class;
+use Path::Tiny qw/ tempdir path /;
 use GitStore;
+
+use lib 't/lib';
+use Utils;
 
 plan skip_all => 'Test needs Git::Repository'
     unless eval "use Git::Repository; 1";
 
-plan tests => 7;
+plan tests => 4;
 
-# init the test
-my $directory = 't/test';
-dir($directory)->rmtree;
-my $gitobj = Git::PurePerl->init( directory => $directory );
-
-my $gs = GitStore->new($directory);
+my $gs = new_gitstore();
 
 my @bad_files = (
     '/oops', 
@@ -28,20 +26,25 @@ $gs->set( $_ => $_ ) for @bad_files;
 
 $gs->commit;
 
-is $gs->get( $_ ) => $_, "can retrieve '$_'" for @bad_files;
+subtest 'can retrieve' => sub {
+    is $gs->get( $_ ) => $_, $_ for @bad_files;
+};
 
-my $clone_dir = dir( './t/test-clone' );
-$clone_dir->rmtree;
+my $clone_dir = tempdir( DIR => 't/stores' );
+diag "cloning into $clone_dir";
 
-ok Git::Repository->run( clone => dir($directory)->absolute->stringify,
+ok !Git::Repository->run( clone => path($gs->repo)->absolute->stringify,
         $clone_dir->stringify ), "cloning";
 
-for my $file ( @bad_files ) {
-    ok -f file( $clone_dir, $file )->stringify, "'$file' exists";
-}
+subtest 'file exist in clone' => sub {
+    ok path( $clone_dir, $_ )->exists, $_ for @bad_files;
+};
 
 $gs->delete($_) for @bad_files;
 $gs->commit;
 
-is $gs->get($_) => undef, "'$_' not there anymore" for @bad_files;
+subtest 'not there anymore' => sub {
+    is $gs->get($_) => undef, $_ for @bad_files;
+};
+
 
