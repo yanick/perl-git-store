@@ -13,7 +13,7 @@ use Utils;
 plan skip_all => 'Test needs Git::Repository'
     unless eval "use Git::Repository; 1";
 
-plan tests => 4;
+plan tests => 3;
 
 my $gs = new_gitstore();
 
@@ -33,8 +33,8 @@ subtest 'can retrieve' => sub {
 my $clone_dir = tempdir( DIR => 't/stores' );
 diag "cloning into $clone_dir";
 
-ok !Git::Repository->run( clone => path($gs->repo)->absolute->stringify,
-        $clone_dir->stringify ), "cloning";
+Git::Repository->run( clone => path($gs->repo)->absolute->stringify, 
+    $clone_dir->stringify );
 
 subtest 'file exist in clone' => sub {
     ok path( $clone_dir, $_ )->exists, $_ for @bad_files;

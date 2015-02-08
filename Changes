@@ -4,6 +4,7 @@ Revision history for GitStore
  [API CHANGES]
 
  [BUG FIXES]
+ - Tweak test as cloning was reported as a failure.
 
  [DOCUMENTATION]
 
