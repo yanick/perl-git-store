@@ -1,6 +1,9 @@
 package MooseX::Storage::IO::GitStore;
+BEGIN {
+  $MooseX::Storage::IO::GitStore::AUTHORITY = 'cpan:YANICK';
+}
 #ABSTRACT:  Save Moose objects in your GitStore
-
+$MooseX::Storage::IO::GitStore::VERSION = '0.17';
 use Moose::Role;
 
 requires 'thaw';
@@ -54,6 +57,15 @@ __END__
 
 =pod
 
+=encoding UTF-8
+
+=head1 NAME
+
+MooseX::Storage::IO::GitStore - Save Moose objects in your GitStore
+
+=head1 VERSION
+
+version 0.17
 
 =head1 SYNOPSIS
 
@@ -109,3 +121,26 @@ from an object instead of as a class method.
 =head1 SEE ALSO
 
 L<MooseX::Storage>
+
+=head1 AUTHORS
+
+=over 4
+
+=item *
+
+Fayland Lam <fayland@gmail.com>
+
+=item *
+
+Yanick Champoux <yanick@cpan.org>
+
+=back
+
+=head1 COPYRIGHT AND LICENSE
+
+This software is copyright (c) 2015 by Fayland Lam <fayland@gmail.com>.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
+
+=cut
